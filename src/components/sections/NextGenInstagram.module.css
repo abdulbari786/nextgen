@@ -1,0 +1,124 @@
+.section {
+  background: var(--surf-2);
+}
+
+.filter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.filter button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 9px 18px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  background: var(--white);
+  color: var(--ink-700);
+  font: inherit;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+
+.filter button[aria-pressed="true"] {
+  border-color: var(--blue-600);
+  background: var(--blue-600);
+  color: var(--white);
+}
+
+.filter button span { opacity: 0.8; }
+.filter button:hover { border-color: var(--blue-600); }
+.archiveNote { max-width: 780px; margin: 24px auto 0; text-align: center; color: var(--ink-500); font-size: var(--fs-sm); }
+.count { margin: 28px 0 16px; color: var(--ink-500); font-size: var(--fs-xs); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+.preview {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  padding: 12px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--blue-50);
+  cursor: zoom-in;
+}
+
+.preview img { position: absolute; inset: 12px; width: calc(100% - 24px); height: calc(100% - 24px); object-fit: contain; }
+.kind { position: absolute; bottom: 12px; right: 12px; padding: 4px 10px; background: var(--white); color: var(--ink-900); border: 1px solid var(--line); border-radius: var(--r-pill); font-size: var(--fs-xs); }
+.cardBody { display: flex; flex-direction: column; flex: 1; padding: 24px; }
+.category { font-size: var(--fs-xs); color: var(--ink-500); }
+.cardBody h3 { margin-top: 10px; font-size: var(--fs-h3); line-height: 1.35; font-weight: 500; }
+.cardBody h3 button { min-height: 44px; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.cardBody h3 button:hover { text-decoration: underline; text-underline-offset: 4px; }
+.description { margin-block: 10px 20px; font-size: var(--fs-sm); color: var(--ink-500); }
+.cardBody > a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: auto; font-size: var(--fs-sm); color: var(--blue-600); }
+.cardBody > a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.more { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 16px 28px; margin-top: 36px; }
+.more > a { display: inline-flex; align-items: center; min-height: 44px; color: var(--blue-600); font-size: var(--fs-sm); overflow-wrap: anywhere; }
+
+.dialog {
+  width: min(900px, calc(100vw - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--white);
+  color: var(--ink-700);
+  overscroll-behavior: contain;
+}
+
+.dialog::backdrop { background: rgb(10 22 40 / 0.78); }
+.dialogHeader { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px 20px; background: var(--white); border-bottom: 1px solid var(--line); }
+.dialogHeader h2 { font-size: var(--fs-h3); line-height: 1.35; font-weight: 500; }
+.iconButton { display: inline-grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; padding: 0; border: 1px solid var(--line-2); border-radius: var(--r-pill); background: var(--white); color: var(--ink-900); cursor: pointer; }
+.iconButton:disabled { opacity: 0.35; cursor: default; }
+.fullImage { display: grid; place-items: center; padding: 16px; background: var(--surf-2); }
+.fullImage img { width: 100%; height: min(62dvh, 680px); object-fit: contain; }
+.carouselControls { display: flex; justify-content: center; align-items: center; gap: 20px; padding: 12px 20px; font-size: var(--fs-sm); border-block: 1px solid var(--line); }
+.dialogBody { padding: 24px; }
+.past { color: var(--blue-700); margin-bottom: 12px; font-size: var(--fs-sm); font-weight: 500; }
+.dialogBody details { margin-top: 20px; }
+.dialogBody summary { display: list-item; min-height: 44px; padding-block: 10px; cursor: pointer; font-size: var(--fs-sm); color: var(--blue-600); }
+.caption { white-space: pre-line; font-size: var(--fs-sm); color: var(--ink-500); overflow-wrap: anywhere; }
+.dialogLinks { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; margin-top: 24px; }
+.dialogLinks > a:last-child { display: inline-flex; align-items: center; min-height: 44px; color: var(--blue-600); font-size: var(--fs-sm); }
+
+@media (max-width: 980px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .grid { grid-template-columns: minmax(0, 1fr); }
+  .preview { aspect-ratio: 1; }
+  .filter { justify-content: flex-start; }
+  .filter button { padding-inline: 14px; }
+  .archiveNote { text-align: left; }
+  .cardBody { padding: 20px; }
+  .dialog { width: calc(100vw - 20px); max-height: calc(100dvh - 20px); }
+  .dialogHeader { padding-inline: 12px; }
+  .dialogBody { padding: 20px; }
+  .fullImage { padding: 8px; }
+}

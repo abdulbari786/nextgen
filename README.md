@@ -1,38 +1,27 @@
-# NextGen AI Training Institute — Website
+# NextGen AI Training Institute
 
-A React + Vite marketing site for NextGen AI Training Institute, inspired by the structure
-of medhaedutech.com, with a distinct "schematic / circuit" visual identity.
+Standalone NextGen website. The homepage is `/`. Built with Next.js, React, TypeScript and the existing blue-and-white NextGen design.
 
-## Run locally
+## Development
 
-```bash
-npm install
+```sh
+npm ci
 npm run dev
 ```
 
-Then open the printed local URL (usually http://localhost:5173).
+Open http://localhost:3401.
 
-## Build for production
+## Verify and build
 
-```bash
+```sh
 npm run build
-npm run preview
+npm run typecheck
 ```
 
-## Pages
+The default build exports to `out/`. Vercel builds use its Next.js runtime and image optimisation. Set `NEXT_PUBLIC_SITE_URL` to the actual standalone origin before deployment so canonical links, social metadata, structured data and the sitemap use the correct domain. No production domain is assumed.
 
-- `/` — Home
-- `/courses` — All courses (filterable by category)
-- `/courses/:slug` — Full course detail page (curriculum, roadmap, FAQ, enroll form)
-- `/internships` — Internship-paired tracks
-- `/placements` — Placement process & outcomes
-- `/about` — About the institute
-- `/testimonials` — Student reviews
-- `/blog` — Blog listing
-- `/contact` — Contact + lead form
+## Content
 
-## Editing content
+Course copy: `src/content/nextgen.ts` and `src/content/nextgen-page.ts`. Instagram archive: `src/content/nextgen-instagram.json`; source notes: `docs/NEXTGEN_INSTAGRAM.md`. Shared contact details: `src/content/site.ts`.
 
-- Courses: `src/data/courses.js` — one object per course (fees, curriculum, FAQs, etc.)
-- Testimonials: `src/data/testimonials.js`
-- Design tokens (colors, type, spacing): top of `src/index.css`
+Enquiries use the existing NextGen phone and WhatsApp number. There is no backend or lead collection form. Historical poster dates and prices remain labelled as archive material.

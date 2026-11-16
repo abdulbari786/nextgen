@@ -1,0 +1,157 @@
+import { gallery } from "./gallery";
+
+export const nextgenCourseGroups = [
+  {
+    title: "AI and software development",
+    description: "Build practical skills in data, AI and application development.",
+    courses: [
+      { label: "Data Science, Gen AI and Agentic AI", detail: "Explore data science and modern AI through practical projects.", topics: ["Data science", "Generative AI", "Agentic AI", "Project work"] },
+      { label: "Full Stack Web Development", detail: "Learn how the front end and back end come together to build and deploy a website.", topics: ["Front-end development", "Back-end development", "Deployment"] },
+      { label: "Full Stack App Development", detail: "Develop practical skills for building and shipping mobile applications.", topics: ["Mobile applications", "App development", "Building and shipping"] },
+      { label: "Backend AI", detail: "Connect backend development with AI technologies for real-world applications.", topics: ["Backend development", "AI technologies", "Application development"] },
+    ],
+  },
+  {
+    title: "Programming and cloud",
+    description: "Choose a programming language or build skills in cloud infrastructure and delivery.",
+    courses: [
+      { label: "Python", detail: "Build your programming skills with Python for practical software development.", topics: ["Python", "Programming"] },
+      { label: "Java", detail: "Learn Java programming for application development.", topics: ["Java", "Programming"] },
+      { label: "DevOps", detail: "Explore DevOps and the practices used to deliver and operate software.", topics: ["DevOps", "Software delivery"] },
+      { label: "AWS", detail: "Build cloud computing skills with Amazon Web Services.", topics: ["AWS", "Cloud computing"] },
+    ],
+  },
+  {
+    title: "Business software",
+    description: "Explore training in enterprise software used by businesses.",
+    courses: [
+      { label: "SAP", detail: "Develop enterprise software skills with SAP. Ask about available modules.", topics: ["SAP", "Business software"] },
+    ],
+  },
+  {
+    title: "Civil engineering and design",
+    description: "Develop skills in technical drawing, construction quality and quantity surveying.",
+    courses: [
+      { label: "AutoCAD 2D + 3D", detail: "Technical drawing, drafting and three-dimensional modelling for engineering design.", topics: ["2D drafting", "Technical drawings", "3D modelling"] },
+      { label: "Quality Assurance (QA)", detail: "Understand quality standards and processes with a focus on preventing defects.", topics: ["Quality standards", "Quality processes", "Defect prevention"] },
+      { label: "Quality Control (QC)", detail: "Explore inspection, testing and quality management in civil engineering.", topics: ["Inspection", "Testing", "Quality management"] },
+      { label: "Primavera", detail: "Learn Primavera for project planning and scheduling.", topics: ["Primavera", "Project planning", "Scheduling"] },
+      { label: "Quantity Surveying", detail: "Professional training in quantity surveying for civil engineering.", topics: ["Quantity surveying", "Civil engineering"] },
+    ],
+  },
+  {
+    title: "English and communication",
+    description: "Build the communication skills to support your studies and professional life.",
+    courses: [
+      { label: "Professional English", detail: "Practise spoken English and professional communication, with confidence and interview skills.", topics: ["Spoken English", "Communication", "Interview skills"] },
+    ],
+  },
+] as const;
+
+export const nextgenSocial = {
+  instagram: "https://www.instagram.com/nextgenaitraininginstitute/",
+  handle: "@nextgenaitraininginstitute",
+  galleryHeading: "From the NextGen feed.",
+  galleryIntro: "Course posters, student stories, AI explainers and moments from the institute.",
+  galleryNotice: "An archive of our Instagram posts. Dates, fees and offers printed on older posters refer to those announcements. Contact us for the next batch and current terms.",
+  categories: ["All", "Courses", "Hackathons", "Student stories", "AI explainers", "Institute"],
+  showMore: "Show more posts",
+  showLess: "Show fewer posts",
+  openPost: "Open post on Instagram",
+  watchReel: "Watch reel on Instagram",
+  view: "View",
+  close: "Close",
+  previous: "Previous image",
+  next: "Next image",
+  caption: "Original Instagram caption",
+  past: "Past announcement",
+  reel: "Reel",
+  post: "Post",
+  image: "Image",
+  of: "of",
+  resultNoun: "posts",
+  fullSize: "Open full-size image",
+  supportHeading: "Skills, with help for the next step.",
+  supportIntro: "Career support advertised by NextGen, alongside practical training.",
+  support: ["Resume building", "LinkedIn profile optimisation", "Interview preparation", "Job recruitment support"],
+  supportNote: "Ask which support is included with your chosen course.",
+  filterLabel: "Filter Instagram posts",
+  hackathonHeading: "A day to turn ideas into something real.",
+  hackathonDate: "3 October 2026",
+  hackathonStatus: "Completed event",
+  hackathonName: "NextGen AI Hackathon",
+  hackathonIntro: "Students and tech enthusiasts came together in New Malakpet to build real-world solutions. Explore the highlights, prize ceremony and participants’ own accounts.",
+  hackathonFacts: [
+    { label: "Grand cash prize", value: "₹3,000" },
+    { label: "Winning participant", value: "Huzaifa, Team ISL" },
+    { label: "Second place", value: "Team CBIT" },
+  ],
+  hackathonHighlight: "Watch the highlights",
+  hackathonPhotos: "See the prize ceremony",
+  hackathonNext: "Ask about the next hackathon",
+  hackathonMessage: "Hello, I'd like to hear about the next NextGen AI Hackathon. Please share details when a new event is announced.",
+  hackathonSource: "https://www.instagram.com/abdulsacademy/reel/DeLjSbWToai/",
+  hackathonAwards: "https://www.instagram.com/abdulsacademy/p/DeMRDv9k8Fu/",
+  bannerHeading: "Nine skills. One month. ₹999.",
+  bannerIntro: "Office tools, AI tools, coding basics and English. Explore the programme and the original course poster.",
+  bannerAction: "See the programme",
+  posterAction: "View the original poster",
+  bannerImage: "/photos/nextgen-instagram/DcmehrlzHlV-thumb.webp",
+  bannerFullImage: "/photos/nextgen-instagram/DcmehrlzHlV.webp",
+  bannerAlt: "NextGen’s original ₹999 skills programme poster, with its historical September batch dates",
+  bannerCaption: "Original programme poster. September batch dates shown.",
+  hackathonImage: "/photos/nextgen-instagram/DeEUeqfE_WN.webp",
+  hackathonImageAlt: "A photograph from the NextGen AI Hackathon in October 2026",
+} as const;
+
+export const nextgenPage = {
+  title: "NextGen AI Training Institute in Hyderabad",
+  description:
+    "AI, data science, software development, civil engineering and English courses for students and working professionals in New Malakpet, Hyderabad.",
+  nav: [
+    { href: "#courses", label: "Courses" },
+    { href: "#skills", label: "30-day programme" },
+    { href: "#hackathon", label: "Events" },
+    { href: "#faculty", label: "Faculty" },
+    { href: "#campus", label: "Our classrooms" },
+  ],
+  location: "New Malakpet, Hyderabad",
+  heading: "Make room for your next skill.",
+  introduction:
+    "AI, code and everyday digital skills. Practical courses for students getting started and working professionals taking their next step.",
+  browse: "Explore the courses",
+  enquire: "Enquire on WhatsApp",
+  contact: "Contact us",
+  message:
+    "Hello, I'd like to know about courses at NextGen AI Training Institute. Could you help me choose a course and share the current fees and batch timings?",
+  heroShot: gallery.find((shot) => shot.src.endsWith("nextgen-class.jpg"))!,
+  labShot: gallery.find((shot) => shot.src.endsWith("ai-lab.jpg"))!,
+  photoCaption: "A class at NextGen. Your learning happens here.",
+  coursesHeading: "What would you like to learn?",
+  coursesIntro:
+    "Explore courses by subject below. Each course has its own enquiry link for the detailed syllabus, fees, duration and current batch timings.",
+  courseAction: "Ask about this course",
+  courseMessage: (name: string) =>
+    `Hello, I'm interested in ${name} at NextGen. Please share the syllabus, duration, fees and available batch timings.`,
+  skillsHeading: "A small start. Nine useful skills.",
+  skillsIntro:
+    "Build your digital foundations with a month of office tools, coding basics, AI tools and English.",
+  skillsAction: "Ask about the 30-day programme",
+  skillsCaption: "Programme fee",
+  startsLabel: "New batch",
+  durationLabel: "Duration",
+  skillsIncludes: "Included in the programme",
+  labHeading: "A place to sit down and practise.",
+  labIntro:
+    "Learn in our New Malakpet classrooms. Laptop access and air-conditioned classrooms are included in the 30-day skills programme.",
+  labCaption: "The NextGen computer lab, ready for a batch.",
+  visitHeading: "Let’s find your starting point.",
+  visitIntro:
+    "Tell us what you want to learn and where you are starting from. We’ll help you choose a course and share the current batch details.",
+  addressLabel: "Come meet us",
+  directions: "Get directions",
+  backToTop: "Back to top",
+  privacy: "Privacy",
+  terms: "Terms",
+  skip: "Skip to the courses",
+} as const;

@@ -1,0 +1,15 @@
+.marquee { min-width: 0; width: 100%; overflow: hidden; }
+.track { display: flex; width: max-content; animation: drift 48s linear infinite; animation-play-state: paused; }
+.marquee[data-running="true"] .track { animation-play-state: running; }
+.group { display: flex; flex: 0 0 auto; gap: 16px; padding-right: 16px; }
+.photo { flex: 0 0 auto; width: 520px; margin: 0; }
+.photo img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-radius: var(--r-md); background: var(--surf-2); }
+.marquee:focus-within .track, .marquee:active .track { animation-play-state: paused; }
+@media (hover: hover) and (pointer: fine) { .marquee:hover .track { animation-play-state: paused; } }
+@keyframes drift { to { transform: translateX(-50%); } }
+@media (max-width: 767px) { .photo { width: 340px; } }
+@media (prefers-reduced-motion: reduce) {
+  .marquee { overflow-x: auto; }
+  .track { animation: none; transform: none; }
+  .group[aria-hidden="true"] { display: none; }
+}

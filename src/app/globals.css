@@ -1,0 +1,2722 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   Abdul's Academy design system, 2026-09-11 pass
+
+   Layout reference: cadmus.io, the client's choice. Its page is one deep brand
+   colour for the hero band, the featured card and the footer, big rounded
+   corners on those bands, pastel fills on cards, a photograph with a white
+   card floating over it, and centred section heads with a one-line lede.
+   Geometry is borrowed from it. Colour is taken from none of it: this brand is
+   white plus the academy's own blue, so cadmus's maroon becomes --blue-900 and
+   its pastels become --blue-50 and --blue-100.
+
+   LOCKED, do not reopen: single light theme, no dark variant, no second
+   accent, sentence-case headings, and --blue-500 is display-only because it is
+   4.05:1 on white. --blue-600 (6.2:1) carries every piece of small text.
+   ========================================================================= */
+
+@theme {
+  --color-white: #ffffff;
+  --color-surf-1: #fafcff;
+  --color-surf-2: #f5f8fd;
+  --color-ink-900: #0a1628;
+  --color-ink-700: #1f2e45;
+  --color-ink-500: #4a5a72;
+  --color-ink-400: #5c6d86;
+  --color-line: #e2e8f2;
+  --color-line-2: #cbd5e5;
+  --color-blue-50: #eef4ff;
+  --color-blue-100: #d9e6ff;
+  --color-blue-200: #b3ccff;
+  --color-blue-500: #2a78ff;
+  --color-blue-600: #1257d6;
+  --color-blue-700: #0e45ab;
+  --color-blue-900: #0a2e73;
+
+  --font-sans: var(--font-schibsted), sans-serif;
+}
+
+:root {
+  /* ---- neutrals, carrying a blue cast so nothing reads as a dead grey ---- */
+  --white: #ffffff;
+  --surf-1: #fafcff;
+  --surf-2: #f5f8fd;
+  --ink-900: #0a1628;
+  --ink-700: #1f2e45;
+  --ink-500: #4a5a72;
+  /* Darkened from #6b7c96 on 2026-09-12. That value is 4.24:1 on white and
+     3.84:1 on --blue-50, and this token is only ever used at --fs-sm and
+     --fs-xs, so every one of its nine uses was under the 4.5:1 AA bar for
+     small text. #5c6d86 is 5.27:1 on white and 4.77:1 on --blue-50, and is
+     still lighter than --ink-500 (#4a5a72), which is the whole point of it. */
+  --ink-400: #5c6d86;
+  --line: #e2e8f2;
+  --line-2: #cbd5e5;
+
+  /* ---- blue. -500 and -600 are the two values locked from the logo plate ---- */
+  --blue-50: #eef4ff;
+  --blue-100: #d9e6ff;
+  --blue-200: #b3ccff;
+  --blue-500: #2a78ff;
+  --blue-600: #1257d6;
+  --blue-700: #0e45ab;
+  --blue-900: #0a2e73;
+
+  /* ---- the deep band. One value used three times: hero, featured card, footer ---- */
+  --deep: radial-gradient(70% 60% at 50% 0%, rgb(42 120 255 / 0.32) 0%, rgb(42 120 255 / 0) 70%),
+    var(--blue-900);
+
+  /* ---- type. Display weights are 500: the reference's display face is light,
+     and "too bold" has been the complaint twice. ---- */
+  --fs-display: clamp(2.5rem, 6vw, 4.25rem);
+  --fs-h2: clamp(1.875rem, 3.6vw, 2.75rem);
+  --fs-h3: 1.1875rem;
+  --fs-lede: clamp(1.0625rem, 1.4vw, 1.1875rem);
+  --fs-body: 1rem;
+  --fs-sm: 0.875rem;
+  --fs-xs: 0.75rem;
+
+  /* ---- space. 4px base. --sec-y is the ONE section rhythm value ---- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+  --sp-20: 80px;
+  --sec-y: clamp(64px, 9vw, 112px);
+
+  /* ---- radius. cadmus: 8 on images, 12 on cards, 32 on the big bands ---- */
+  --r-xs: 4px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: clamp(20px, 3vw, 32px);
+  --r-pill: 9999px;
+
+  /* ---- shadow. cadmus: one soft warm shadow, 1px 8px 12px at 12%, recoloured
+     to our ink. Used on the things that float: hero cards, the visit card. ---- */
+  --sh-sub: 0 2px 2px rgb(10 22 40 / 0.05), 0 3px 3px rgb(10 22 40 / 0.03);
+  --sh-float: 0 8px 12px rgb(10 22 40 / 0.08), 0 1px 2px rgb(10 22 40 / 0.05);
+
+  /* ---- motion. .2s dominant, .3s ease on disclosure ---- */
+  --t-fast: 0.15s;
+  --t-base: 0.2s;
+  --e-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* The drawer curve, from Ionic by way of Vaul: leaves fast, lands soft. */
+  --e-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* ---- layout ---- */
+  --max: 1200px;
+  --pad: clamp(20px, 4vw, 40px);
+  --nav-h: 68px;
+}
+
+/* ============================================================================
+   base
+   ========================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* so anchor targets clear the sticky header */
+  scroll-padding-top: calc(var(--nav-h) + 16px);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--white);
+  color: var(--ink-700);
+  font-family: var(--font-schibsted), system-ui, sans-serif;
+  font-size: var(--fs-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  color: var(--ink-900);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--fs-display);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+h2 {
+  font-size: var(--fs-h2);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  font-weight: 500;
+}
+
+h3 {
+  font-size: var(--fs-h3);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+
+p {
+  margin: 0;
+  color: var(--ink-500);
+  text-wrap: pretty;
+}
+
+p strong {
+  color: var(--ink-900);
+  font-weight: 600;
+}
+
+a {
+  color: var(--blue-600);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+::selection {
+  background: var(--blue-100);
+  color: var(--ink-900);
+}
+
+:focus-visible {
+  outline: 2px solid var(--blue-600);
+  outline-offset: 3px;
+  border-radius: var(--r-xs);
+}
+
+/* On the deep bands the outline has to be light to be seen: --blue-600 on
+   --blue-900 is 2.03:1, under the 3:1 that WCAG 1.4.11 wants for a focus
+   indicator. Every surface painted with --deep belongs in this list. It has
+   been missed twice now, once for .section--deep and once for .doc-head, so
+   if you add a fifth deep surface add it here in the same commit. */
+.hero :focus-visible,
+.feature :focus-visible,
+.ftr :focus-visible,
+.section--deep :focus-visible,
+.doc-head :focus-visible {
+  outline-color: var(--white);
+}
+
+/* Every figure on this site is tabular. A results list set in proportional
+   numerals is the clearest sign nobody designed it. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.flip {
+  transform: rotate(180deg);
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--white);
+  color: var(--ink-900);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-sm);
+  box-shadow: var(--sh-float);
+  font-weight: 600;
+}
+.skip:focus {
+  left: var(--sp-4);
+  top: var(--sp-4);
+}
+
+/* ============================================================================
+   layout
+   ========================================================================= */
+
+.wrap {
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+
+.section {
+  padding-block: var(--sec-y);
+}
+
+/* The pale band. Sections alternate white, this, and the deep blocks, which is
+   what tells a reader they have crossed into a new section. */
+.section--tint {
+  background: var(--blue-50);
+}
+
+/* The fourth deep surface, after the hero, the NextGen offer card and the
+   footer. The results sit on it
+   because the client asked on 2026-09-12 for them highlighted, and said how:
+   "highlighting just change the bg". Rounded top and bottom so it reads as a
+   block the page passes through, the way the hero and the footer do at their
+   own ends. Cards inside keep their white ground, so every name, mark and
+   percentage is unchanged dark-on-white; only the head, the note and the
+   disclosure button sit on the blue. */
+.section--deep {
+  background: var(--deep);
+  border-radius: var(--r-xl);
+  color: rgb(255 255 255 / 0.8);
+}
+
+.section--deep .head h2 {
+  color: var(--white);
+}
+
+.section--deep .head .eyebrow {
+  color: var(--blue-200);
+}
+
+.section--deep .head .lede,
+.section--deep .note {
+  color: rgb(255 255 255 / 0.8);
+}
+
+.section--deep .card {
+  background: var(--white);
+}
+
+/* the white button needs no outline once it is the light thing on the band */
+.section--deep .btn--secondary {
+  border-color: transparent;
+}
+
+.results-exams {
+  margin-top: var(--sp-8);
+}
+
+/* ---- section head: centred eyebrow, heading, one-line lede ---- */
+.head {
+  display: grid;
+  justify-items: center;
+  gap: var(--sp-4);
+  max-width: 760px;
+  margin: 0 auto var(--sp-12);
+  text-align: center;
+}
+
+.head--left {
+  justify-items: start;
+  margin-inline: 0;
+  text-align: left;
+}
+
+/* Balanced wraps on the two short strings that break into two lines and are
+   not headings. At 1440 the pass-rate label stranded "2026" on a line of its
+   own. Headings already get this from the h1-h4 rule above, so they are not
+   listed again here. */
+.stat span,
+.admit-title {
+  text-wrap: balance;
+}
+
+.head h2 {
+  max-width: 24ch;
+}
+
+.head .lede {
+  max-width: 58ch;
+}
+
+.lede {
+  font-size: var(--fs-lede);
+  line-height: 1.6;
+  color: var(--ink-500);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue-600);
+}
+
+.note {
+  font-size: var(--fs-sm);
+  color: var(--ink-400);
+  max-width: 72ch;
+}
+
+.note--center {
+  text-align: center;
+  margin-inline: auto;
+}
+
+/* ---- the one list style. A 6px blue dot, never an icon per line ---- */
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.list li {
+  position: relative;
+  padding-left: var(--sp-5);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--ink-700);
+}
+
+.list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--blue-500);
+}
+
+/* ============================================================================
+   buttons and links
+   ========================================================================= */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 46px;
+  padding: 0 var(--sp-6);
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  font-family: inherit;
+  font-size: var(--fs-body);
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--t-base) var(--e-out), border-color var(--t-base) var(--e-out),
+    color var(--t-base) var(--e-out);
+}
+
+.btn--primary {
+  background: var(--blue-600);
+  color: var(--white);
+}
+.btn--primary:hover {
+  background: var(--blue-700);
+}
+
+.btn--secondary {
+  background: var(--white);
+  color: var(--ink-900);
+  border-color: var(--line-2);
+}
+.btn--secondary:hover {
+  border-color: var(--ink-400);
+}
+
+/* on the deep bands */
+.btn--white {
+  background: var(--white);
+  color: var(--blue-900);
+}
+.btn--white:hover {
+  background: var(--blue-50);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--white);
+  border-color: rgb(255 255 255 / 0.4);
+}
+.btn--ghost:hover {
+  background: rgb(255 255 255 / 0.08);
+  border-color: var(--white);
+}
+
+.btn--sm {
+  min-height: 38px;
+  padding: 0 var(--sp-4);
+  font-size: var(--fs-sm);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.ctas--center {
+  justify-content: center;
+}
+
+/* the reference's "Learn more" arrow link */
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--blue-600);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+.more svg {
+  transition: transform var(--t-base) var(--e-out);
+}
+.more:hover svg,
+a:hover > .more svg {
+  transform: translateX(3px);
+}
+
+.link {
+  color: var(--blue-600);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--blue-200);
+  transition: text-decoration-color var(--t-base) var(--e-out);
+}
+.link:hover {
+  text-decoration-color: var(--blue-600);
+}
+
+/* ============================================================================
+   header: a full-width white bar, sticky, links centred, mark left, CTA right
+   ========================================================================= */
+
+.hdr {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgb(255 255 255 / 0.94);
+  backdrop-filter: saturate(1.6) blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+.mast {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--sp-4);
+  min-height: var(--nav-h);
+}
+
+.mark {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: var(--r-xs);
+}
+
+.mark img {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
+@media (max-width: 420px) {
+  .mark img {
+    height: 24px;
+  }
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-6);
+}
+
+.nav a {
+  color: var(--ink-500);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--t-base) var(--e-out);
+}
+
+.nav a:hover {
+  color: var(--ink-900);
+}
+
+.mast-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sp-3);
+}
+
+/* No ring (Saad, 2026-09-16: "remove the outline circle"). The 44px box stays:
+   it is the tap target, and the icon inside it is only 20px. */
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: var(--ink-900);
+  cursor: pointer;
+}
+
+.nav-panel,
+.nav-scrim {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .mast {
+    grid-template-columns: auto 1fr;
+  }
+  .nav {
+    display: none;
+  }
+  .nav-toggle {
+    display: inline-flex;
+  }
+  .mast-end .btn {
+    display: none;
+  }
+
+  /* The scrim. Dims the page the drawer is sitting over and closes it on a
+     tap, which is the gesture people reach for before they find the X. */
+  .nav-scrim {
+    position: fixed;
+    inset: var(--nav-h) 0 0;
+    z-index: 47;
+    display: block;
+    background: rgb(10 22 40 / 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--t-base) var(--e-out),
+      visibility var(--t-base);
+  }
+
+  .nav-scrim[data-open="true"] {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* The drawer. A panel at the right edge, over the dimmed page.
+     Saad, 2026-09-16: "nav in mbile should be like a drawer with nice
+     animation", then "it should be side drawer"; before that it appeared
+     under the bar and pushed the page down, with no transition on either
+     edge. It comes in from the right because that is the edge the toggle
+     sits on, so it reads as coming out of the button that opened it.
+
+     It sits above the call bar (40) and the notices (45) and below the header
+     (50), so the close button stays reachable the whole way through. Why it is
+     a sibling of .hdr rather than a child is in Header.tsx: a backdrop-filter
+     makes an element the containing block for fixed descendants, and nested
+     inside it this would open as a 68px sliver.
+
+     A transition, not keyframes: this is a toggle, and a transition is the one
+     that reverses cleanly from wherever it has got to when it is pressed
+     again. visibility rides along so the closed drawer leaves the tab order
+     and the accessibility tree: it is visible from the first non-zero progress
+     and holds until the end on the way out, which is the special case the spec
+     carves out for it. At progress zero exactly it is still hidden, which is
+     why focus has to wait a frame; the note in Header.tsx has that. */
+  .nav-panel {
+    position: fixed;
+    inset: var(--nav-h) 0 0 auto;
+    z-index: 48;
+    width: min(320px, 86vw);
+    display: flex;
+    flex-direction: column;
+    padding: var(--sp-4) var(--sp-4) calc(var(--sp-6) + env(safe-area-inset-bottom));
+    background: var(--white);
+    box-shadow: -8px 0 32px rgb(10 22 40 / 0.14);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    visibility: hidden;
+    transform: translateX(100%);
+    transition:
+      transform 280ms var(--e-drawer),
+      visibility 280ms;
+  }
+
+  .nav-panel[data-open="true"] {
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  /* It takes focus when it opens, so that the reader is inside it rather than
+     on a button behind it. That is not a control, so it wears no ring. */
+  .nav-panel:focus {
+    outline: none;
+  }
+
+  .nav-panel ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* The list links only. Unscoped this also caught the CTA button below and
+     outranked .btn--primary on all four of these: it took the ink colour
+     rather than white, the panel padding rather than the button padding, and
+     a bottom border of its own. Saad, 2026-09-16: "text here shdoul be
+     white?" */
+  .nav-panel li a {
+    display: flex;
+    align-items: center;
+    min-height: 52px;
+    color: var(--ink-900);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-panel li:last-child a {
+    border-bottom: 0;
+  }
+
+  .nav-panel-cta {
+    margin-top: auto;
+    padding-top: var(--sp-5);
+  }
+
+  /* The contents cascade in behind the panel, 40ms apart, and leave together:
+     the delays hang off the open state only, so closing runs all of them at
+     once. A staggered exit reads as the drawer coming apart rather than
+     shutting. */
+  .nav-panel li,
+  .nav-panel-cta {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 240ms var(--e-out),
+      transform 240ms var(--e-out);
+  }
+
+  .nav-panel[data-open="true"] li,
+  .nav-panel[data-open="true"] .nav-panel-cta {
+    opacity: 1;
+    transform: none;
+  }
+
+  .nav-panel[data-open="true"] li:nth-child(1) {
+    transition-delay: 100ms;
+  }
+  .nav-panel[data-open="true"] li:nth-child(2) {
+    transition-delay: 140ms;
+  }
+  .nav-panel[data-open="true"] li:nth-child(3) {
+    transition-delay: 180ms;
+  }
+  .nav-panel[data-open="true"] li:nth-child(4) {
+    transition-delay: 220ms;
+  }
+  /* Anything past the fourth link joins the last step rather than arriving
+     first: without this a fifth LINKS entry gets a 0ms delay and beats the
+     four above it into view. */
+  .nav-panel[data-open="true"] li:nth-child(n + 5) {
+    transition-delay: 260ms;
+  }
+  .nav-panel[data-open="true"] .nav-panel-cta {
+    transition-delay: 260ms;
+  }
+}
+
+/* ============================================================================
+   hero: one deep blue band with rounded bottom corners, centred copy, two cards
+   ========================================================================= */
+
+.hero {
+  position: relative;
+  padding-block: clamp(56px, 8vw, 96px) clamp(40px, 6vw, 72px);
+  background: var(--deep);
+  color: var(--white);
+  border-radius: 0 0 var(--r-xl) var(--r-xl);
+}
+
+.hero-copy {
+  display: grid;
+  justify-items: center;
+  gap: var(--sp-5);
+  text-align: center;
+}
+
+.hero .eyebrow {
+  color: var(--blue-200);
+}
+
+.hero h1 {
+  color: var(--white);
+  max-width: 18ch;
+}
+
+.hero .lede {
+  color: rgb(255 255 255 / 0.8);
+  max-width: 60ch;
+}
+
+.hero .ctas {
+  margin-top: var(--sp-2);
+}
+
+.hero-cards {
+  display: grid;
+  gap: var(--sp-4);
+  max-width: 960px;
+  margin: clamp(40px, 6vw, 64px) auto 0;
+}
+
+@media (min-width: 720px) {
+  .hero-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* The hero cascades in CSS rather than through Reveal (Saad, 2026-09-15:
+   "this hero section should also have the stagger reveal"). It is the first
+   paint and the largest text on the page, and a reveal that waits for
+   hydration would hold the headline invisible until the JavaScript arrives.
+   Same beat as Reveal: 12px out of an 8px blur, 500ms, 60ms apart, copy
+   first and then the two cards. Fill-mode backwards, so once the animation
+   ends each element is back on its own styles and the card's hover transform
+   still applies. */
+.hero-copy > *,
+.hero-card {
+  animation: rise 0.5s var(--e-out) backwards;
+}
+
+.hero-copy > :nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.hero-copy > :nth-child(3) {
+  animation-delay: 120ms;
+}
+
+.hero-copy > :nth-child(4) {
+  animation-delay: 180ms;
+}
+
+.hero-cards > :nth-child(1) {
+  animation-delay: 240ms;
+}
+
+.hero-cards > :nth-child(2) {
+  animation-delay: 300ms;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(8px);
+  }
+}
+
+.hero-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-6);
+  background: var(--white);
+  color: var(--ink-700);
+  border-radius: var(--r-lg);
+  text-decoration: none;
+  box-shadow: var(--sh-float);
+  transition: transform var(--t-base) var(--e-out), box-shadow var(--t-base) var(--e-out);
+}
+
+.hero-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 24px rgb(10 22 40 / 0.12), 0 1px 2px rgb(10 22 40 / 0.05);
+}
+
+/* Each card opens with its academy's mark. The NextGen mark is square and
+   needs the full row; the Abdul's plate is a wide wordmark and sits lower. */
+.hero-card-logo {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  margin-bottom: var(--sp-2);
+}
+
+/* the NextGen file carries a 12% white margin on every side, so it is set
+   larger than it looks */
+.hero-card-logo .mark-img {
+  height: 64px;
+  width: auto;
+  margin-left: -8px;
+}
+
+.hero-card-logo[data-shape="wide"] .mark-img {
+  height: 34px;
+}
+
+.hero-card-title {
+  color: var(--ink-900);
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.hero-card .list {
+  margin-top: var(--sp-3);
+}
+
+.hero-card .more {
+  margin-top: var(--sp-4);
+}
+
+/* ============================================================================
+   proof strip: three figures, centred, no borders
+   ========================================================================= */
+
+/* Tinted since 2026-09-15, when the admissions strip moved above the hero and
+   left this section white against the white programmes below it. */
+.proof {
+  padding-block: clamp(48px, 6vw, 80px);
+  background: var(--blue-50);
+}
+
+/* Four since 2026-09-12: the client flagged CBSE missing from the pass rate
+   and added the free-seat figure. Four across needs a wider container than
+   three did, and drops to two columns rather than one on a phone: stacked,
+   four figures push the whole page down by most of a viewport. */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--sp-6);
+  max-width: 1080px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.stat b {
+  display: block;
+  color: var(--ink-900);
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.stat span {
+  display: block;
+  margin-top: var(--sp-3);
+  color: var(--ink-500);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+}
+
+@media (max-width: 900px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-8) var(--sp-6);
+  }
+}
+
+@media (max-width: 380px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================================
+   cards. Pale blue fill on white sections, white with a hairline on the band.
+   ========================================================================= */
+
+.cards {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+.cards--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.cards--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cards--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Three cards go straight to one column. Two-up would leave the third alone
+   beside a hole, which is the arrangement the client stopped on in the
+   results grid. */
+@media (max-width: 860px) {
+  .cards--3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1024px) {
+  .cards--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .cards--4,
+  .cards--2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-6);
+  background: var(--blue-50);
+  border: 1px solid transparent;
+  border-radius: var(--r-lg);
+}
+
+.section--tint .card {
+  background: var(--white);
+  border-color: var(--line);
+}
+
+.card > p {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-sm);
+}
+
+.card .list {
+  margin-top: var(--sp-4);
+}
+
+.card .more {
+  margin-top: auto;
+  padding-top: var(--sp-5);
+}
+
+.card-ico {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  margin-bottom: var(--sp-4);
+  color: var(--blue-600);
+}
+
+.card-ico .mark-img {
+  height: 28px;
+  width: auto;
+}
+
+/* ---- marks: a row of third-party logos at one height ---- */
+/* Sized so the four-mark row (SSC, CBSE, ICSE, IGCSE) fits one line in a
+   four-column card at the 1200px container: 30 + 50 + 42 + 56 + three 12px
+   gaps is 214px against 220px of content width. */
+.marks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  min-height: 36px;
+  margin-bottom: var(--sp-5);
+}
+
+.marks .mark-img {
+  height: 36px;
+  width: auto;
+}
+
+.marks .mark-img--tall {
+  height: 48px;
+}
+
+/* A board with no logo of its own. Sized and weighted to sit beside the
+   seals as one of them, not as a tag. */
+.mark-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  min-width: 36px;
+  padding: 0 9px;
+  border-radius: var(--r-sm);
+  background: var(--blue-600);
+  color: var(--white);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.head-mark {
+  display: flex;
+  justify-content: center;
+}
+
+.head-mark .mark-img {
+  height: 72px;
+  width: auto;
+}
+
+/* ============================================================================
+   results: one card per board, top five rows, one button opens them all
+   ========================================================================= */
+
+/* Two columns, not four: at four, a 1200px container gives each card about
+   220px of content width, and the names ("Mohammed Murtaza Ali Amaan") wrap a
+   word per line beside their marks. */
+/* Closed, every board is the height of the tallest, so the four read as one
+   balanced block (Saad, 2026-09-15: "visually balance the boxes, same size").
+   Open, SSC runs to 21 rows against Intermediate's 6, and forcing those equal
+   would leave a card three-quarters empty, so each takes its own height. */
+.boards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  gap: var(--sp-4);
+}
+
+.boards--open {
+  grid-auto-rows: auto;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .boards {
+    grid-template-columns: 1fr;
+    /* Stacked, there is nothing to balance against, so each takes its height. */
+    grid-auto-rows: auto;
+  }
+}
+
+.board-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.board-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+
+.board-brand .mark-img {
+  height: 44px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.board-brand .mark-text {
+  flex-shrink: 0;
+}
+
+.board-head h3 {
+  font-size: 1.0625rem;
+}
+
+.board-authority {
+  margin-top: 2px;
+  font-size: var(--fs-xs);
+  color: var(--ink-400);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  background: var(--blue-100);
+  color: var(--blue-700);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* The three row tracks live on the list, not on each row, so every row in a
+   card measures against the same ones and the rank column sizes to the widest
+   rank that card holds. A fixed 1.5rem fitted the school boards, whose ranks
+   run 1 to 21, and clipped a five-digit entrance rank the day EAPCET briefly
+   arrived as a fifth board: 38px of number in a 24px track, printed over the
+   name. Those ranks live in .highlight-names now and no five-digit rank
+   currently reaches this list, so the minmax is what keeps it safe if one ever
+   does. Row gap stays zero; the rows carry their own rule and padding. */
+.rows {
+  list-style: none;
+  margin: var(--sp-5) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(1.5rem, auto) minmax(0, 1fr) auto;
+  column-gap: var(--sp-3);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: span 3;
+  align-items: baseline;
+  padding-block: var(--sp-2);
+  border-top: 1px solid var(--line);
+  font-size: var(--fs-sm);
+}
+
+.row-rank {
+  color: var(--ink-400);
+  font-size: var(--fs-xs);
+}
+
+.row-name {
+  color: var(--ink-900);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.row-note {
+  display: block;
+  color: var(--ink-400);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+}
+
+.row-figures {
+  display: flex;
+  gap: var(--sp-3);
+  color: var(--ink-700);
+  white-space: nowrap;
+}
+
+.row-percent {
+  color: var(--blue-600);
+  font-weight: 600;
+}
+
+/* Pinned to the foot of the card, so the four boards align at the bottom
+   while they share a height. `.card > p` sets an 8px top margin on every
+   paragraph in a card and outranks a lone class, hence the child selector. */
+.card > .board-more {
+  margin-top: auto;
+  padding-top: var(--sp-3);
+  font-size: var(--fs-xs);
+  color: var(--ink-400);
+}
+
+.results-foot {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--sp-10);
+}
+
+/* ============================================================================
+   fallen behind: one centred statement, three figures, one button
+   ========================================================================= */
+
+.behind {
+  max-width: 760px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.behind h2 {
+  max-width: 26ch;
+  margin: var(--sp-4) auto 0;
+}
+
+.behind .lede {
+  max-width: 58ch;
+  margin: var(--sp-5) auto 0;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-6);
+  margin-top: var(--sp-10);
+}
+
+.fact b {
+  display: block;
+  color: var(--ink-900);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.fact span {
+  display: block;
+  margin-top: var(--sp-2);
+  color: var(--ink-500);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+}
+
+.behind .ctas {
+  margin-top: var(--sp-10);
+}
+
+@media (max-width: 560px) {
+  .facts {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================================
+   nextgen: one deep featured card beside a two-by-two of course cards
+   ========================================================================= */
+
+.ng {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+@media (min-width: 900px) {
+  .ng {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-8);
+  background: var(--deep);
+  color: rgb(255 255 255 / 0.8);
+  border-radius: var(--r-lg);
+}
+
+.feature .eyebrow {
+  color: var(--blue-200);
+}
+
+.feature h3 {
+  margin-top: var(--sp-3);
+  color: var(--white);
+  font-size: clamp(1.5rem, 2.4vw, 1.875rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  margin-top: var(--sp-5);
+}
+
+.price b {
+  color: var(--white);
+  font-size: clamp(2.5rem, 4vw, 3.25rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.price s {
+  color: rgb(255 255 255 / 0.55);
+  font-size: var(--fs-lede);
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin: var(--sp-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pills li {
+  padding: 6px 12px;
+  border-radius: var(--r-pill);
+  background: rgb(255 255 255 / 0.12);
+  color: var(--white);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.feature .list {
+  margin-top: var(--sp-6);
+}
+
+.feature .list li {
+  color: rgb(255 255 255 / 0.85);
+}
+
+.feature .list li::before {
+  background: var(--blue-200);
+}
+
+.feature .ctas {
+  margin-top: auto;
+  padding-top: var(--sp-8);
+}
+
+/* the nine skills, each with its own mark, as the reference's integrations grid */
+.skills {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skill {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  color: var(--ink-900);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.skill-ico {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  color: var(--blue-600);
+}
+
+.skill-ico .mark-img {
+  height: 28px;
+  width: auto;
+}
+
+@media (max-width: 420px) {
+  .skill {
+    padding: var(--sp-3);
+    font-size: var(--fs-xs);
+  }
+}
+
+/* The career cards sit one grid gap under the offer band. The band wraps
+   `.ng` since the --blue-200 step-up, so the sibling is `.ng-band`. */
+.ng-band + .cards {
+  margin-top: var(--sp-4);
+}
+
+/* ============================================================================
+   faq: native details, a plus that turns into a cross
+   ========================================================================= */
+
+.faq {
+  max-width: 760px;
+  margin-inline: auto;
+  border-top: 1px solid var(--line);
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--line);
+}
+
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-5) 0;
+  list-style: none;
+  cursor: pointer;
+  color: var(--ink-900);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-mark {
+  position: relative;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--blue-50);
+  transition: transform var(--t-base) var(--e-out), background var(--t-base) var(--e-out);
+}
+
+.faq-mark::before,
+.faq-mark::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--blue-600);
+  transform: translate(-50%, -50%);
+}
+
+.faq-mark::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.faq-item[open] .faq-mark {
+  transform: rotate(45deg);
+  background: var(--blue-100);
+}
+
+.faq-item p {
+  max-width: 62ch;
+  padding-bottom: var(--sp-5);
+}
+
+.faq-foot {
+  margin-top: var(--sp-8);
+}
+
+/* ============================================================================
+   visit: the photograph with a white card floating over it
+   ========================================================================= */
+
+.spot {
+  position: relative;
+}
+
+.spot-photo {
+  margin: 0;
+}
+
+.spot-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-lg);
+}
+
+.spot-card {
+  padding: var(--sp-8);
+  background: var(--white);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-float);
+}
+
+.spot-card h3 {
+  margin-top: var(--sp-3);
+}
+
+.spot-card > p {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-sm);
+}
+
+.spot-card .addr {
+  margin-top: var(--sp-6);
+  color: var(--ink-900);
+  font-weight: 500;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+
+.spot-card .ctas {
+  margin-top: var(--sp-6);
+}
+
+@media (min-width: 900px) {
+  .spot-photo {
+    margin-left: 30%;
+  }
+  .spot-card {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: min(440px, 46%);
+    transform: translateY(-50%);
+  }
+}
+
+@media (max-width: 899px) {
+  .spot-card {
+    position: relative;
+    margin: calc(-1 * var(--sp-10)) var(--sp-4) 0;
+  }
+}
+
+/* ============================================================================
+   footer: deep blue, rounded top corners. A brand row, then four equal link
+   columns, two across on a phone. Reorganised 2026-09-15; the reasoning is on
+   the component.
+   ========================================================================= */
+
+.ftr {
+  padding-block: var(--sp-16) var(--sp-12);
+  background: var(--deep);
+  color: rgb(255 255 255 / 0.72);
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+  /* clears the sticky call bar on mobile */
+  padding-bottom: calc(var(--sp-12) + env(safe-area-inset-bottom));
+}
+
+/* Row gap stays zero because the columns subgrid onto these rows (below) and
+   would inherit it between a heading and its list. */
+.ftr-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--sp-6);
+  row-gap: 0;
+}
+
+@media (min-width: 900px) {
+  .ftr-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: var(--sp-12);
+  }
+}
+
+/* Each column is heading over list on the parent's rows (subgrid), so the
+   headings in a row share one height and the four lists start on the same
+   line even when the NextGen heading wraps beside its tile. */
+.ftr-grid > div {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 2;
+  align-content: start;
+}
+
+.ftr h4 {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: 32px;
+  margin: 0 0 var(--sp-4);
+  color: var(--white);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ftr ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-3);
+  /* the list row is as tall as the longest list; a shorter one packs at the top */
+  align-content: start;
+}
+
+.ftr a {
+  color: rgb(255 255 255 / 0.72);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+  transition: color var(--t-base) var(--e-out);
+}
+
+.ftr a:hover {
+  color: var(--white);
+}
+
+.ftr p {
+  color: rgb(255 255 255 / 0.72);
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+}
+
+.ftr .mark img {
+  height: 28px;
+}
+
+/* the contact column: address and hours above the links, all one block */
+.ftr-contact address {
+  margin: 0 0 var(--sp-3);
+  font-style: normal;
+}
+
+.ftr-contact p {
+  margin: 0 0 var(--sp-4);
+}
+
+/* the NextGen mark has a white ground, so on the deep band it sits in a tile */
+.ftr-tile {
+  display: inline-flex;
+  padding: 4px;
+  background: var(--white);
+  border-radius: var(--r-sm);
+}
+
+.ftr-tile .mark-img {
+  height: 24px;
+  width: auto;
+}
+
+.ftr-base {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  margin-top: var(--sp-12);
+  padding-top: var(--sp-6);
+  border-top: 1px solid rgb(255 255 255 / 0.16);
+  color: rgb(255 255 255 / 0.55);
+  font-size: var(--fs-xs);
+}
+
+.ftr-base p {
+  margin: 0;
+  color: inherit;
+  font-size: inherit;
+  line-height: 1.5;
+}
+
+.ftr-base a {
+  font-size: inherit;
+}
+
+/* A phone shows the lists two across; the spacing steps down with it so the
+   footer stays well under two screens. */
+@media (max-width: 899px) {
+  .ftr {
+    padding-top: var(--sp-12);
+  }
+
+  .ftr ul {
+    gap: var(--sp-2);
+  }
+
+  /* the second pair of lists, under the first */
+  .ftr-grid > div:nth-child(n + 3) {
+    margin-top: var(--sp-8);
+  }
+
+  .ftr-base {
+    margin-top: var(--sp-8);
+  }
+}
+
+.creed {
+  display: flex;
+  gap: var(--sp-4);
+  color: rgb(255 255 255 / 0.55);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ============================================================================
+   sticky call bar, phones only. Body gets bottom padding so it covers nothing.
+   ========================================================================= */
+
+.bar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 40;
+  display: none;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  background: rgb(255 255 255 / 0.96);
+  backdrop-filter: blur(10px);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bar a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 56px;
+  color: var(--ink-900);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.bar a + a {
+  background: var(--blue-600);
+  color: var(--white);
+}
+
+@media (max-width: 760px) {
+  .bar {
+    display: grid;
+  }
+  body {
+    padding-bottom: 56px;
+  }
+}
+
+/* ---- touch targets. WCAG 2.5.8 wants 44px on anything that is its own
+   control. Inline links within a sentence are exempt. ---- */
+@media (pointer: coarse) {
+  .btn--sm {
+    min-height: 44px;
+  }
+  .mark {
+    padding-block: var(--sp-2);
+  }
+  .more,
+  .ftr ul a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .card .more {
+    padding-top: var(--sp-2);
+  }
+}
+
+/* ============================================================================
+   opening hours, in the visit card. Two rows, label left and time right, so
+   the times line up under each other.
+   ========================================================================= */
+
+.hours {
+  display: grid;
+  gap: var(--sp-2);
+  margin: var(--sp-5) 0 0;
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--line);
+}
+
+.hours > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+
+.hours dt {
+  color: var(--ink-500);
+  font-size: var(--fs-sm);
+}
+
+.hours dd {
+  margin: 0;
+  color: var(--ink-900);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+/* ============================================================================
+   the dated intake. A centred banner on a light band between the header and
+   the hero: date, batch, one button. Still no badge and no countdown.
+   --blue-700 on --blue-100 clears AA for the date line.
+   ========================================================================= */
+
+.admit {
+  background: var(--blue-100);
+}
+
+/* One slide per view, scroll-snapped. Native scrolling does the work, so a
+   touch swipe, a trackpad swipe, shift-wheel and the arrow keys all drive it
+   without a library. grid-auto-columns: 100% is what makes a slide exactly one
+   band wide; the grid also gives every slide the height of the tallest, so the
+   band does not jump as it moves. */
+.admit-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.admit-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* The track is full-bleed and focusable, so the global 3px outward offset put
+   the ring's left and right edges outside the viewport where they clip. Inward
+   keeps the whole ring on screen. */
+.admit-track:focus-visible {
+  outline-offset: -3px;
+}
+
+.admit-slide {
+  scroll-snap-align: start;
+}
+
+.admit-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-4);
+  padding-block: clamp(32px, 4vw, 48px);
+  text-align: center;
+}
+
+/* Saad asked for dots "so that swiping is easier". The button is a 24px tap
+   target and the dot inside it is the 8px mark, rather than an 8px button no
+   thumb can hit. */
+.admit-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-1);
+  padding-bottom: clamp(16px, 2vw, 24px);
+}
+
+.admit-dot {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+/* --blue-500 and not --blue-200 for the resting dot. --blue-200 on the band's
+   --blue-100 computes to 1.29:1, which is not a faint dot, it is no dot: the
+   row read as one stray pill and told nobody there was a second slide.
+   --blue-500 is 3.20:1 and clears WCAG 1.4.11 for a state indicator. Rule 4 in
+   CLAUDE.md holds, it governs small text at 4.5:1, and this is non-text UI. */
+.admit-dot::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-pill);
+  background: var(--blue-500);
+  transition: width var(--t-base) var(--e-out), background var(--t-base) var(--e-out);
+}
+
+.admit-dot[aria-current="true"]::before {
+  width: 22px;
+  background: var(--blue-600);
+}
+
+.admit-date {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0;
+  color: var(--blue-700);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.admit-title {
+  margin: 0;
+  color: var(--ink-900);
+  font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.admit-row .btn {
+  margin-top: var(--sp-2);
+}
+
+/* the two conducting bodies' seals, centred over the date line */
+.admit-marks {
+  justify-content: center;
+  min-height: 0;
+  margin-bottom: 0;
+}
+
+.admit-marks .mark-img {
+  height: 44px;
+  width: auto;
+}
+
+/* the NTA wordmark reads at a wordmark's height beside the round seal */
+.admit-marks .mark-img--wide {
+  height: 28px;
+}
+
+/* ============================================================================
+   the gallery. An even 4:3 grid. CSS columns came first and was dropped: with
+   four landscape frames and two portrait, no ordering fills three columns to
+   within 230px of each other, and the short column reads as a hole. The four
+   landscapes are natively 4:3 so only the two portraits crop, each to an
+   anchor measured in src/content/gallery.ts.
+   ========================================================================= */
+
+.shots {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-4);
+}
+
+.shot {
+  margin: 0;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--blue-100);
+  line-height: 0;
+}
+
+.shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+@media (max-width: 900px) {
+  .shots {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Nine frames at two columns leave the last one alone on a fourth row. Give
+     it both tracks so the grid ends square instead of half empty. Its image
+     keeps 4:3 and simply reads as the wide frame that closes the set. */
+  .shots > :last-child {
+    grid-column: span 2;
+  }
+}
+
+/* The phone arrangement: the same nine frames, run as the reviews row runs
+   its cards, edge to edge outside .wrap. Saad, 2026-09-16: "this section on
+   mobile should be same as the reviews section, marquee, desktop unchanged".
+   Only ever one of the two is rendered, so the frames of the other are never
+   near the viewport and, being lazy, are never fetched.
+
+   This also retires the one-column grid, and with it a rule that used to leak
+   into it: a last-child span of 2 in a single-track grid asked for a column
+   that was not there, so the grid made an implicit one, gave the spanning
+   frame the full width and collapsed every other frame to zero. */
+.shots-marquee {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  .shots {
+    display: none;
+  }
+
+  .shots-marquee {
+    display: block;
+  }
+}
+
+.shots-marquee .shot {
+  width: clamp(240px, 78vw, 340px);
+  flex-shrink: 0;
+}
+
+/* Nine frames against the reviews row's five, so a longer pass holds the same
+   35px or so a second. Reading a photograph is quicker than reading a review,
+   but a row that outruns the one below it reads as a different component. */
+.shots-marquee .marquee-track {
+  animation-duration: 80s;
+}
+
+/* ============================================================================
+   results highlights. Three white cards on the deep band, above the boards:
+   the figures a parent scans for before reading a single name. Each opens
+   with the mark of the body its figure names, on the faculty cards' rule.
+   Replaced the one wide competitive card on 2026-09-15; what is in the row
+   and why is argued in src/content/results.ts.
+   ========================================================================= */
+
+/* All three cards share one height, the tallest. Only the middle one carries
+   the EAPCET names, so hanging them from the top was tried first and left it
+   jutting below the other two; Saad, 2026-09-16: "make these cards aligned,
+   same size". Grid stretch does it, the same way the board cards below share
+   a height, so this is simply the default left alone. */
+.highlights {
+  margin-bottom: var(--sp-4);
+}
+
+/* The names behind the figure, as a run that wraps rather than the board
+   cards' table. The table was tried first and cost this card about 200px,
+   which equal heights then handed to the other two as a blank foot; centring
+   that space only split it in two and knocked the three figures off one line
+   (Saad, 2026-09-16: "too much empty space on those 2 cards", then "those two
+   cards still doesn't look good"). A wrapped run costs about 40px instead, so
+   all three cards are short enough that the slack stops reading as a hole,
+   and every name is still on the page.
+
+   Each pair holds together on one line: a rank orphaned from its name is
+   worse than a ragged right edge. */
+.highlight-names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+  margin: var(--sp-4) 0 0;
+  padding: var(--sp-3) 0 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+}
+
+.highlight-names li {
+  color: var(--ink-700);
+  white-space: nowrap;
+}
+
+.highlight-names b {
+  margin-right: var(--sp-1);
+  color: var(--ink-400);
+  font-weight: 500;
+}
+
+.highlight-figure {
+  margin: 0;
+}
+
+.highlight-figure b {
+  display: block;
+  color: var(--blue-600);
+  font-size: clamp(2rem, 3.5vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.highlight h3 {
+  margin-top: var(--sp-3);
+  color: var(--ink-900);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.highlight-detail {
+  margin-top: var(--sp-1);
+  color: var(--ink-500);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+}
+
+/* ============================================================================
+   faculty. A name and the credential given for it, nothing else.
+   ========================================================================= */
+
+/* Wordmarks sit shorter than the round emblems, and the row keeps its height
+   whether a card has marks or not so all four names stay on one line.
+
+   IT HOLDS ONE LINE. Abdul Aziz carries two wordmarks and they wrapped, which
+   pushed his name a line below the other three and made the row of cards look
+   broken. nowrap is the instruction; the sizes below are what makes it fit.
+
+   The wide marks were already meant to be short and were not, because
+   `:not(.mark-img--tall)` counts its argument: that selector is (0,3,0) and
+   the --wide rule under it was (0,2,0), so the general rule beat the specific
+   one and Google and Tech Mahindra rendered at 34px, about 100px and 137px
+   wide. The base rule now excludes --wide outright rather than out-specifying
+   it. At the narrowest the 4-across grid ever gets (a 1025px viewport: 40px
+   --pad, three 16px gaps, 24px card padding, so 176px of card) the pair
+   measures 65 + 88 + the inherited 12px gap = 165px. The gap is deliberately
+   left alone: this row is also the results highlights' (page.tsx), and there
+   is no width here that needs the 4px back. */
+.marks--credential {
+  flex-wrap: nowrap;
+  min-height: 34px;
+  margin-bottom: var(--sp-4);
+}
+
+.marks--credential .mark-img:not(.mark-img--tall):not(.mark-img--wide) {
+  height: 34px;
+}
+
+.marks--credential .mark-img--wide {
+  height: 22px;
+}
+
+/* NextGen's file has an opaque near-white ground, so on the cards' --blue-50
+   it reads as a pasted rectangle. The footer already solves this with
+   .ftr-tile and the hero by oversizing; this is the same answer for a row that
+   renders whatever marks its entry names. No padding: the artwork carries a
+   12% white margin of its own, which is the inset. */
+.marks--credential .mark-img--ground {
+  background: var(--white);
+  border-radius: var(--r-sm);
+}
+
+.teacher h3 {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.teacher-title {
+  margin-top: var(--sp-1);
+  color: var(--ink-400);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Pinned to the floor of the card, so the qualifications share a baseline the
+   way the names do. auto eats the slack a shorter card leaves; the padding is
+   the floor under it, so a card whose role and qualification both run long
+   still has a gap between them.
+
+   THE PIN NEEDS ITS OWN SELECTOR. `.card > p` above sets a top margin on every
+   paragraph in a card and is (0,1,1); `.teacher-cred` is (0,1,0) and loses to
+   it, so `margin-top: auto` written here does nothing at all and the card sat
+   20.7px off its own floor with the rule looking correct. Matching `.card >`
+   puts this at (0,2,0) and it wins. Nothing else moves into that rule: the
+   same override is also quietly beating the font-size declared below, and
+   changing that is a design decision, not a bug fix. */
+.teacher-cred {
+  padding-top: var(--sp-4);
+  color: var(--blue-700);
+  font-size: var(--fs-body);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.card > .teacher-cred {
+  margin-top: auto;
+}
+
+/* ============================================================================
+   reviews. The aggregate in the head, then the five quotes as one
+   self-scrolling row of review-shaped cards. Two CSS columns came first and
+   were replaced on 2026-09-15 (Saad: shorter, and looking like reviews).
+   ========================================================================= */
+
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  white-space: nowrap;
+}
+
+/* Filled, not outlined: an outlined star reads as an empty star, which is the
+   opposite of what 5.0 means. Hugeicons free ships stroke geometry only, so
+   the star's own closed path is filled here rather than a different star being
+   drawn by hand. */
+.rating-stars {
+  display: inline-flex;
+  color: var(--blue-500);
+}
+
+.rating-stars svg,
+.rating-stars svg * {
+  fill: currentColor;
+}
+
+.rating b {
+  color: var(--ink-900);
+  font-weight: 600;
+}
+
+/* One self-scrolling row, edge to edge, faded at both ends. The track holds
+   the cards twice and slides by half its width, so the second copy is already
+   in place when the first has gone. That is the whole trick, and it is why
+   each set carries the gap as trailing padding: half the track is then
+   exactly one set. It runs only while on screen (Marquee.tsx sets
+   data-playing) and never while the pointer is on it. 48s for one pass of
+   five cards is about 35px a second, slow enough to read. */
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 48s linear infinite;
+  animation-play-state: paused;
+}
+
+.marquee[data-playing="true"] .marquee-track {
+  animation-play-state: running;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+/* Every card the height of the tallest (Saad, 2026-09-15: "boxes should be
+   of same size, do something to make the design look intentional"). What makes
+   it intentional is the foot: the reviewer sits at the bottom of every card
+   behind a hairline, so the row reads as one system and a short quote reads
+   as a short quote rather than a card that came out wrong. */
+.marquee-set {
+  display: flex;
+  align-items: stretch;
+  gap: var(--sp-4);
+  padding-right: var(--sp-4);
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Wide enough that the longest of the five runs to about ten lines, which
+   sets the height of every card. The quote is never clamped: reviews.ts
+   forbids trimming a reviewer's words. */
+.review {
+  width: clamp(280px, 80vw, 380px);
+  flex-shrink: 0;
+}
+
+.review-stars {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--blue-500);
+}
+
+.review-stars svg,
+.review-stars svg * {
+  fill: currentColor;
+}
+
+.review blockquote {
+  margin: var(--sp-4) 0 0;
+  color: var(--ink-700);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+
+.review figcaption {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-top: auto;
+  padding-top: var(--sp-4);
+  border-top: 1px solid var(--line);
+  color: var(--ink-700);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.review blockquote {
+  margin-bottom: var(--sp-5);
+}
+
+.review-avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--blue-100);
+  color: var(--blue-700);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+/* ============================================================================
+   the offer band inside NextGen. A step up from the section's own tint, so the
+   offer reads as the promoted thing on the page.
+
+   Two things this is not. It is not --blue-500: that is 4.05:1 on white and
+   display-only, so the price would read and "Free laptop access" under it
+   would not. And the section is not white: taking the tint off it to make this
+   band pop put four white sections in a row and dropped the career cards out
+   of `.section--tint .card`, so the tint stayed and the band stepped up
+   instead. Nothing small sits directly on this band -- the offer card is deep
+   and the nine skills are white cards -- so --blue-200 carries no text.
+   ========================================================================= */
+
+.ng-band {
+  padding: var(--pad);
+  border-radius: var(--r-xl);
+  background: var(--blue-200);
+}
+
+/* ============================================================================
+   the prose pages: privacy, terms, and the 404. A deep head, then one column
+   at a reading measure. The sticky header is white and these pages open on the
+   deep band, so the head carries its own top padding rather than relying on
+   the hero's.
+   ========================================================================= */
+
+.doc-page {
+  padding-bottom: var(--sec-y);
+}
+
+.doc-head {
+  padding-block: clamp(48px, 7vw, 88px) clamp(40px, 5vw, 64px);
+  background: var(--deep);
+  border-radius: 0 0 var(--r-xl) var(--r-xl);
+  color: rgb(255 255 255 / 0.8);
+}
+
+.doc-head h1 {
+  max-width: 22ch;
+  margin-top: var(--sp-4);
+  color: var(--white);
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.doc-head .eyebrow {
+  color: var(--blue-200);
+}
+
+.doc-head .lede {
+  max-width: 62ch;
+  margin-top: var(--sp-5);
+  color: rgb(255 255 255 / 0.8);
+}
+
+.doc-head .ctas {
+  margin-top: var(--sp-8);
+}
+
+.doc-updated {
+  margin-top: var(--sp-6);
+  color: var(--blue-200);
+  font-size: var(--fs-xs);
+}
+
+.doc-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--blue-200);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.doc-back:hover {
+  color: var(--white);
+}
+
+/* 65ch is the measure; the section rhythm is looser than the marketing page's
+   because this is read in order rather than scanned. */
+.doc {
+  max-width: 65ch;
+  margin-top: clamp(40px, 6vw, 72px);
+}
+
+.doc section + section {
+  margin-top: var(--sp-12);
+}
+
+.doc h2 {
+  font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.doc p {
+  margin-top: var(--sp-4);
+  color: var(--ink-700);
+  line-height: 1.7;
+}
+
+.doc .list {
+  margin-top: var(--sp-5);
+}
+
+.doc .list li {
+  color: var(--ink-700);
+  line-height: 1.6;
+}
+
+.doc .list li + li {
+  margin-top: var(--sp-3);
+}
+
+/* the legal links in the footer base, side by side. `.ftr ul` turns every
+   footer list into a grid and outranks a lone class, hence the descendant. */
+.ftr .ftr-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 700px) {
+  .doc-head h1 {
+    max-width: none;
+  }
+}
+
+/* ============================================================================
+   notices. A pill in the bottom-right corner and, above it, a stack of cards
+   for what is live or announced (src/content/announcements.ts). Fixed, under
+   the header's layer and over the call bar's. Hidden by the component until
+   the hero has scrolled off. The cards enter on the hero's `rise` beat at
+   300ms, 60ms apart (inline animation-delay), so a reopen replays it.
+   ========================================================================= */
+
+.notices {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 45;
+  display: grid;
+  justify-items: end;
+  gap: var(--sp-3);
+  width: min(340px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.notices > * {
+  pointer-events: auto;
+}
+
+/* development only: clears the review toolbar that shares this corner */
+.notices[data-dev] {
+  bottom: 92px;
+}
+
+.notices-stack {
+  display: none;
+  width: 100%;
+  overflow: hidden;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: 0 16px 32px rgb(10 22 40 / 0.14), 0 1px 2px rgb(10 22 40 / 0.06);
+}
+
+.notices[data-open="true"] .notices-stack {
+  display: block;
+}
+
+.notices-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-500);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.notices-head button,
+.notice-x {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-500);
+  cursor: pointer;
+  transition: background var(--t-base) var(--e-out), color var(--t-base) var(--e-out);
+}
+
+.notices-head button:hover,
+.notice-x:hover {
+  background: var(--blue-50);
+  color: var(--ink-900);
+}
+
+.notices-stack ul {
+  display: grid;
+  gap: var(--sp-1);
+  max-height: min(60vh, 440px);
+  margin: 0;
+  padding: var(--sp-2);
+  overflow: auto;
+  list-style: none;
+}
+
+.notice {
+  position: relative;
+  animation: rise 0.3s var(--e-out) backwards;
+}
+
+.notice a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2px var(--sp-3);
+  padding: var(--sp-3) var(--sp-10) var(--sp-3) var(--sp-3);
+  border-radius: var(--r-md);
+  color: inherit;
+  text-decoration: none;
+  transition: background var(--t-base) var(--e-out);
+}
+
+.notice a:hover {
+  background: var(--blue-50);
+}
+
+.notice a > svg {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  color: var(--blue-600);
+}
+
+.notice-kind {
+  color: var(--blue-700);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.notice-title {
+  color: var(--ink-900);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.notice-meta {
+  color: var(--ink-500);
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+}
+
+.notice-x {
+  position: absolute;
+  top: var(--sp-2);
+  right: var(--sp-2);
+}
+
+.notices-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 10px 12px 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  background: var(--white);
+  color: var(--ink-900);
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  box-shadow: var(--sh-float);
+  cursor: pointer;
+  transition: transform var(--t-base) var(--e-out), box-shadow var(--t-base) var(--e-out);
+}
+
+.notices-pill svg {
+  color: var(--blue-600);
+}
+
+.notices-pill b {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--r-pill);
+  background: var(--blue-600);
+  color: var(--white);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .notices-pill:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 20px rgb(10 22 40 / 0.12), 0 1px 2px rgb(10 22 40 / 0.05);
+  }
+}
+
+/* above the call bar, which is 56px plus the safe area */
+@media (max-width: 760px) {
+  .notices,
+  .notices[data-dev] {
+    right: 12px;
+    bottom: calc(68px + env(safe-area-inset-bottom));
+    width: calc(100vw - 24px);
+  }
+}
+
+/* ============================================================================
+   motion. The entrance is the Reveal component (a 12px rise out of an 8px
+   blur, 500ms, once, 60ms apart across a grid), the figures count up
+   (Figure) and the reviews row scrolls itself (Marquee). All three already
+   stand still under reduced motion; this covers the CSS transitions and turns
+   the marquee into a row that scrolls by hand.
+   ========================================================================= */
+
+/* The wrapper a staggered Reveal puts around each child: a one-cell grid, so
+   a card fills its track exactly as it did when it was the grid item. */
+.reveal-item {
+  display: grid;
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    /* transition-delay belongs here for the same reason animation-delay does.
+       Without it the drawer's staggered links still arrive one at a time over
+       260ms while every duration around them is collapsed, which is the
+       cascade the setting is asking us not to run. */
+    transition-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .marquee {
+    overflow-x: auto;
+    mask-image: none;
+  }
+  /* The drawer appears rather than rising. The rule above already collapses
+     its duration; this takes the distance out, so nothing travels at all. */
+  .nav-panel,
+  .nav-panel li,
+  .nav-panel-cta {
+    transform: none;
+  }
+  .marquee-track {
+    animation: none;
+  }
+  .marquee-set[aria-hidden] {
+    display: none;
+  }
+}
+
+.mast > .mark { gap: 10px; }
+.mast > .mark img { width: 44px; height: 44px; object-fit: contain; }
+.brand-name { display: grid; gap: 2px; font-size: 20px; font-weight: 600; line-height: 1.1; }
+.brand-name > span { font-size: 10px; font-weight: 400; letter-spacing: 0.01em; }
+@media (max-width: 420px) {
+  .mast > .mark img { width: 38px; height: 38px; }
+  .brand-name { font-size: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-item { opacity: 1 !important; transform: none !important; filter: none !important; }
+}
