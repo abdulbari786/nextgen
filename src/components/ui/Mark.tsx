@@ -1,0 +1,41 @@
+import Image from "next/image";
+import { marks, type MarkKey } from "@/content/marks";
+import { asset } from "@/lib/asset";
+
+/**
+ * A third-party logo at a CSS-controlled height. Image marks keep their
+ * aspect ratio; text marks (a board with no logo of its own) render as a
+ * small tile in the brand blue so the row still reads as a row of marks.
+ *
+ * Two shape flags, both set in marks.ts: `tall` lifts a portrait mark so it
+ * does not read as a dot beside the round seals, and `wide` shortens a
+ * wordmark so it does not run half the width of the card it sits in. A third,
+ * `ground`, says the file has no transparency, so a row on a tinted surface
+ * can give it a ground of its own instead of letting it show as a pale
+ * rectangle.
+ *
+ * The src is run through asset() to pick up the deploy base path. These are
+ * small and fixed, so next/image's own 1x/2x srcset covers them on Vercel and
+ * the Pages export ships the files as they are; no sizes prop is needed
+ * either way, and the four SVG marks skip the optimiser entirely.
+ */
+export function Mark({ k, className }: { k: MarkKey; className?: string }) {
+  const m = marks[k];
+  return (
+    <Image
+      className={[
+        "mark-img",
+        "tall" in m && m.tall ? "mark-img--tall" : null,
+        "wide" in m && m.wide ? "mark-img--wide" : null,
+        "ground" in m && m.ground ? "mark-img--ground" : null,
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      src={asset(m.src)}
+      alt={m.alt}
+      width={m.w}
+      height={m.h}
+    />
+  );
+}
