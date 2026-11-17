@@ -110,6 +110,7 @@ export const nextgenPage = {
     "AI, data science, software development, civil engineering and English courses for students and working professionals in New Malakpet, Hyderabad.",
   nav: [
     { href: "#courses", label: "Courses" },
+    { href: "#jobs", label: "Jobs" },
     { href: "#skills", label: "30-day programme" },
     { href: "#hackathon", label: "Events" },
     { href: "#faculty", label: "Faculty" },
