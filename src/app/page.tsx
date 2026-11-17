@@ -4,6 +4,7 @@ import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { Header } from "@/components/Header";
 import { HackathonMarquee } from "@/components/sections/HackathonMarquee";
 import { Faculty } from "@/components/sections/Faculty";
+import { Jobs } from "@/components/sections/Jobs";
 import { Reveal } from "@/components/ui/Reveal";
 import { Icon } from "@/components/ui/Icon";
 import { Mark } from "@/components/ui/Mark";
@@ -69,6 +70,8 @@ export default function NextGenPage() {
         </section>
 
         <Courses />
+
+        <Jobs renderedAt={Date.now()} />
 
         <section className={styles.skills} id="skills" aria-labelledby="skills-title">
           <Reveal className="wrap" stagger>
